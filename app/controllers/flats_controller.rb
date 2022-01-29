@@ -5,12 +5,16 @@ class FlatsController < ApplicationController
   def index
     @flats = Flat.all
 
+    # extract lat-lngs of flats to give to init_mapbox
     # the `geocoded` scope filters only flats with coordinates (latitude & longitude)
     # spits out array of hashes with latlong inside [ { lat: , lng: }, { lat: , lng: }, { lat: , lng: }... ]
     @markers = @flats.geocoded.map do |flat|
       {
         lat: flat.latitude,
-        lng: flat.longitude
+        lng: flat.longitude,
+        # renders elements from partial to a string
+        info_window: render_to_string(partial: "info_window", locals: { flat: flat }),
+        image_url: helpers.asset_url('REPLACE_THIS_WITH_YOUR_IMAGE_IN_ASSETS')
       }
     end
   end
